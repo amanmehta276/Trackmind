@@ -1,4 +1,4 @@
-const CACHE = 'trackmind-v1';
+const CACHE = 'trackmind-v2';
 
 const SHELL = [
   '/',
