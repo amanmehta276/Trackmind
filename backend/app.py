@@ -4,6 +4,10 @@ from config import Config
 
 Config.validate()
 
+@app.route("/ping")
+def ping():
+    return {"status": "ok"}, 200
+    
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
