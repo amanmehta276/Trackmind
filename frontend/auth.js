@@ -1,4 +1,4 @@
-const API = "http://localhost:5000";
+const API = "https://trackmind-api.onrender.com";
 
 // Already logged in? Go straight to dashboard
 if (localStorage.getItem("tm_token")) {

@@ -2,7 +2,7 @@
    TrackMind — dashboard.js
 ═══════════════════════════════════════════════ */
 
-const API   = 'http://localhost:5000';
+const API   = 'https://trackmind-api.onrender.com';
 const token = localStorage.getItem('tm_token');
 const user  = JSON.parse(localStorage.getItem('tm_user') || 'null');
 

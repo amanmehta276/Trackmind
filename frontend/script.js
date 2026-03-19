@@ -34,7 +34,7 @@ async function saveLog() {
 
     try {
         // ✅ CHANGE 3: Correct URL + send JWT token in header
-        const response = await fetch("http://localhost:5000/api/notes", {
+        const response = await fetch("https://trackmind-api.onrender.com/api/notes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
