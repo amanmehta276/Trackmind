@@ -12,7 +12,8 @@ if (!token || !user) { window.location.href = 'index.html'; }
 document.getElementById('nav-name').textContent   = user.name.split(' ')[0];
 document.getElementById('sb-name').textContent    = user.name;
 document.getElementById('sb-email').textContent   = user.email || '';
-const todayStr = new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+// FIX 1: Use IST timezone for today's date header
+const todayStr = new Date().toLocaleDateString('en-IN', { weekday:'long', month:'long', day:'numeric', timeZone:'Asia/Kolkata' });
 document.getElementById('today-date').textContent = todayStr;
 document.getElementById('page-date').textContent  = todayStr;
 
@@ -373,11 +374,17 @@ function renderCalendar() {
   const today = new Date();
   const first = new Date(calY, calM, 1);
   const last  = new Date(calY, calM + 1, 0);
+
+  // FIX 2: Convert each note's UTC createdAt to IST before extracting date parts
+  // so calendar dots appear on the correct IST day, not the UTC day
   const noteDates = new Set((window._notes || []).map(n => {
-    const d = new Date(n.createdAt);
+    const d = new Date(new Date(n.createdAt).toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
     return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
   }));
-  lbl.textContent = first.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+
+  // FIX 3: Show calendar month label in IST
+  lbl.textContent = first.toLocaleDateString('en-IN', { month:'long', year:'numeric', timeZone:'Asia/Kolkata' });
+
   let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-dn">${d}</div>`).join('');
   for (let i = 0; i < first.getDay(); i++) html += `<div class="cal-d other"></div>`;
   for (let d = 1; d <= last.getDate(); d++) {
@@ -398,9 +405,12 @@ function maybeClose(id, e) { if (e.target.id === id) closeModal(id); }
 /* ══════════════════════════════════════════════
    FORMAT HELPERS
 ══════════════════════════════════════════════ */
+// FIX 4: Show note timestamps in IST
 function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'
+  return new Date(iso).toLocaleDateString('en-IN', {
+    month:'short', day:'numeric', year:'numeric',
+    hour:'2-digit', minute:'2-digit',
+    timeZone:'Asia/Kolkata'
   });
 }
 function esc(s) {
