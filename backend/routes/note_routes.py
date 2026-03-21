@@ -7,24 +7,25 @@ from middleware import token_required
 
 note_routes = Blueprint("note_routes", __name__)
 
+# IST = UTC + 5:30
+IST = timezone(timedelta(hours=5, minutes=30))
+
 
 @note_routes.route("/api/notes", methods=["POST"])
 @token_required
 def save_note():
     data  = request.json or {}
     notes = data.get("notes", "").strip()
-    image = data.get("image", None)   # base64 data URL string or None
+    image = data.get("image", None)
 
     if not notes and not image:
         return jsonify({"error": "Notes or image required"}), 400
 
-    # Validate image format
     if image and not isinstance(image, str):
         image = None
     if image and not image.startswith("data:image/"):
         image = None
 
-    # Get AI feedback — use vision model if image present
     try:
         if image:
             ai_feedback = analyze_study_with_image(notes or "", image)
@@ -81,8 +82,8 @@ def get_notes():
 @token_required
 def get_stats():
     try:
-        now      = datetime.now(timezone.utc)
-        week_ago = now - timedelta(days=7)
+        now_utc  = datetime.now(timezone.utc)
+        week_ago = now_utc - timedelta(days=7)
 
         total     = db.notes.count_documents({"userId": request.user_id})
         this_week = db.notes.count_documents({
@@ -94,8 +95,16 @@ def get_stats():
             {"userId": request.user_id}, {"createdAt": 1}
         ).sort("createdAt", -1))
 
-        seen_days = {n["createdAt"].date() for n in all_notes}
-        streak, check = 0, now.date()
+        # FIX: convert UTC timestamps to IST before extracting .date()
+        # Without this, a note at 11 PM IST (= 5:30 PM UTC) counts on
+        # the correct IST day but .date() would give the wrong UTC date
+        seen_days = {
+            n["createdAt"].astimezone(IST).date()
+            for n in all_notes
+        }
+
+        streak = 0
+        check  = datetime.now(IST).date()  # today in IST, not UTC
         while check in seen_days:
             streak += 1
             check  -= timedelta(days=1)
