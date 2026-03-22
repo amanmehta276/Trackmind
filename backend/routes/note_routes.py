@@ -54,7 +54,7 @@ def save_note():
             "notes":      notes,
             "aiFeedback": ai_feedback,
             "image":      image,
-            "createdAt":  doc["createdAt"].isoformat()
+            "createdAt":  doc["createdAt"].isoformat()  # already timezone-aware
         }
     }), 201
 
@@ -71,7 +71,9 @@ def get_notes():
                 "notes":      n.get("notes", ""),
                 "aiFeedback": n.get("aiFeedback", ""),
                 "image":      n.get("image", None),
-                "createdAt":  n["createdAt"].isoformat()
+                # MongoDB returns naive UTC datetimes — re-attach UTC tzinfo
+                # so .isoformat() outputs "...+00:00" and JS parses it correctly
+                "createdAt":  n["createdAt"].replace(tzinfo=timezone.utc).isoformat()
             })
         return jsonify(result), 200
     except Exception as e:
@@ -95,11 +97,11 @@ def get_stats():
             {"userId": request.user_id}, {"createdAt": 1}
         ).sort("createdAt", -1))
 
-        # FIX: convert UTC timestamps to IST before extracting .date()
+        # convert UTC timestamps to IST before extracting .date()
         # Without this, a note at 11 PM IST (= 5:30 PM UTC) counts on
         # the correct IST day but .date() would give the wrong UTC date
         seen_days = {
-            n["createdAt"].astimezone(IST).date()
+            n["createdAt"].replace(tzinfo=timezone.utc).astimezone(IST).date()
             for n in all_notes
         }
 

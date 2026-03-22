@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def create_study_log(topics_studied: str, study_time: float, waste_time: float, notes: str, ai_feedback: str) -> dict:
@@ -12,5 +12,5 @@ def create_study_log(topics_studied: str, study_time: float, waste_time: float, 
         "wasteTime": waste_time,        # in minutes
         "notes": notes,
         "aiFeedback": ai_feedback,
-        "createdAt": datetime.utcnow()  # Timestamp every log
+        "createdAt": datetime.now(timezone.utc)  # timezone-aware UTC timestamp
     }
