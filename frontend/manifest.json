@@ -3,7 +3,7 @@
   "short_name": "TrackMind",
   "description": "Your AI-powered study tracker",
   "start_url": "/",
-  "scope": "https://trackmindnotes.netlify.app/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#a671f5",
