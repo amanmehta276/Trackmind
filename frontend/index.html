@@ -4,7 +4,7 @@
   <title>TrackMind</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="/site.webmanifest"/>
+  <link rel="manifest" href="/manifest.json"/>
   <meta name="theme-color" content="#a671f5"/>
   <meta name="mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -573,6 +573,8 @@
       <span class="spinner"></span>
     </button>
 
+    <button id="installBtn" class="cta a3" style="display:none; margin-top:10px;">Install TrackMind 🚀</button>
+
     <!-- Divider -->
     <div class="div a4">or continue with</div>
 
@@ -735,6 +737,12 @@
     clearTimeout(tt);
     tt = setTimeout(() => el.classList.remove('show'), 3200);
   }
+
+  if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log('✅ SW Registered'))
+    .catch(err => console.log('❌ SW Error', err));
+}
 
   document.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
 </script>

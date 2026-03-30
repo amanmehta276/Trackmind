@@ -8,7 +8,7 @@ const SHELL = [
   '/auth.js',
   '/dashboard.js',
   '/script.js',
-  '/site.webmanifest',
+  '/manifest.json',
   '/apple-touch-icon.png',
   '/android-chrome-192x192.png',
   '/android-chrome-512x512.png'

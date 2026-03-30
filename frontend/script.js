@@ -158,3 +158,23 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('❌ SW failed:', err));
   });
 }
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  const btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'block';
+});
+
+document.getElementById('installBtn')?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+
+  console.log('Install:', outcome);
+  deferredPrompt = null;
+});
